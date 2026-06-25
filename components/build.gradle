@@ -1,0 +1,56 @@
+plugins {
+    id 'java-library'
+    id 'checkstyle'
+    id 'jacoco'
+    id 'pmd'
+}
+
+group = 'de.hhn.it.devtools.components'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':apis')
+    // see also the dependencies in build.gradle (root)
+}
+
+test {
+    useJUnitPlatform()
+}
+
+sourceSets {
+    main {
+        java {
+            setSrcDirs(['src/main/java'])
+            include 'module-info.java'
+            include 'de/hhn/it/devtools/components/powerPong/provider/**'
+        }
+    }
+    test {
+        java {
+            setSrcDirs(['src/test/java'])
+            include 'de/hhn/it/devtools/components/powerPong/**'
+        }
+    }
+}
+
+pmd {
+    ignoreFailures = true
+    sourceSets = [ project.sourceSets.main ]
+    ruleSetFiles = rootProject.files("etc/pmd-devtools-ruleset.xml")
+    ruleSets = []
+}
+
+checkstyle {
+    toolVersion = '10.14.2'
+    showViolations = false
+    checkstyleTest.enabled = false
+}
+
+task myJavadocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+    failOnError = false
+}
